@@ -6,6 +6,8 @@ export function switchContext(newContext) {
     if (!state.inTransition) {
       //saveCurrentContext(state.currentContext);
       dispatch(beginTransition(newContext));
+    } else {
+      dispatch(updateTransition(newContext));
     }
 
     if (newContext.type === 'page') {
@@ -15,10 +17,11 @@ export function switchContext(newContext) {
       dispatch(loadFile(newContext)).then(dispatchEndTransition);
     }
 
-    function dispatchEndTransition({loaded}) {
-      if (loaded) {
+    function dispatchEndTransition() {
+      const currentContext = getState().context;
+    	if (currentContext === newContext) {
         dispatch(endTransition(newContext));
-      }
+    	}
     }
   }
 }
@@ -26,6 +29,13 @@ export function switchContext(newContext) {
 function beginTransition(context) {
   return {
     type: 'BEGIN_TRANSITION',
+    context
+  };
+}
+
+function updateTransition(context) {
+  return {
+    type: 'UPDATE_TRANSITION',
     context
   };
 }
@@ -39,25 +49,18 @@ function endTransition(newContext) {
 
 function saveCurrentContext() {
   return (dispatch, getState) => {
-    const currentContext = getState().currentContext;
+    const currentContext = getState().context;
   }
 }
 
 function loadPage(newContext) {
   return (dispatch, getState) => {
-    const state = getState().pages;
     const pageToLoad = newContext.name;
-    if (state.pageToLoad === pageToLoad) {
-      return Promise.resolve({loaded: false});
-    }
-    dispatch(beginLoadPage(pageToLoad));
+    //dispatch(beginLoadPage(pageToLoad));
     return server.loadPage(pageToLoad).then(function(page) {
-      const state = getState().pages;
-    	if (state.pageToLoad === pageToLoad) {
+      const currentContext = getState().context;
+    	if (currentContext.name === pageToLoad) {
     		dispatch(endLoadPage(page));
-    		return {loaded: true};
-    	} else {
-    		return {loaded: false};
     	}
     });
   };
@@ -65,19 +68,12 @@ function loadPage(newContext) {
 
 function loadFile(newContext) {
   return (dispatch, getState) => {
-    const state = getState().files;
     const fileToLoad = newContext.name;
-    if (state.fileToLoad === fileToLoad) {
-      return Promise.resolve({loaded: false});
-    }
-    dispatch(beginLoadFile(fileToLoad));
+    //dispatch(beginLoadFile(fileToLoad));
     return server.loadFile(fileToLoad).then(function(file) {
-      const state = getState().files;
-      if (state.fileToLoad === fileToLoad) {
+      const currentContext = getState().context;
+      if (currentContext.name === fileToLoad) {
         dispatch(endLoadFile(file));
-        return {loaded: true};
-      } else {
-        return {loaded: false};
       }
     });
   };

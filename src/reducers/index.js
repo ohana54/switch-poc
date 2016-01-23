@@ -4,6 +4,7 @@ import transitionReducer from './transitionReducer';
 import visibleEditorReducer from './visibleEditorReducer';
 import pagesReducer from './pagesReducer';
 import filesReducer from './filesReducer';
+import contextReducer from './contextReducer';
 
 const rootReducer = combineReducers({
   inTransition: transitionReducer,

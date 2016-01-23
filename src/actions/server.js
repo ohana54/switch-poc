@@ -8,6 +8,10 @@ const data = {
     page2: {
       name: 'page2',
       content: 'page 22222222222222'
+    },
+    site: {
+      name: 'site',
+      content: 'SITE JS SITE JS'
     }
   },
   files: {

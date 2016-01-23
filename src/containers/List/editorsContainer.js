@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {IDE} from './ide.js';
+import PagesEditor from './pagesEditor.js';
+import FilesEditor from './filesEditor.js';
 
 /* actions */
 import * as actionCreators from 'actions/mainActions';
@@ -17,10 +18,10 @@ export default class EditorsContainer extends Component {
 
   render() {
     return (
-      <div>
-        editors
-        {this.props.visibleEditor === 'page' ? <div>pages editor</div> : null}
-        {this.props.visibleEditor === 'file' ? <div>file editor</div> : null}
+      <div style={{marginTop: '10px'}}>
+        current editor: {this.props.visibleEditor}
+        {this.props.visibleEditor === 'page' ? <PagesEditor></PagesEditor> : null}
+        {this.props.visibleEditor === 'file' ? <FilesEditor></FilesEditor> : null}
         {this.props.visibleEditor === 'db' ? <div>db editor</div> : null}
       </div>
     );
