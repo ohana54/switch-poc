@@ -42,7 +42,27 @@ function loadFile(fileName) {
   });
 }
 
+function savePage(page, content) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      data.pages[page].content = content;
+      resolve();
+    }, 500);
+  });
+}
+
+function saveFile(fileName, content) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      data.files[fileName].content = content;
+      resolve();
+    }, 500);
+  });
+}
+
 export default {
   loadPage,
-  loadFile
+  loadFile,
+  savePage,
+  saveFile
 }

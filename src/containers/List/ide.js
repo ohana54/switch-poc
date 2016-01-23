@@ -17,7 +17,6 @@ export class IDE extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.currentPageId !== nextProps.currentPageId ||
         contextChanged(this.props.context, nextProps.context)) {
-        //  debugger;
       this.setState({
         counter: ++this.state.counter
       });

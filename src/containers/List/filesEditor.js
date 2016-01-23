@@ -14,11 +14,15 @@ export default class FilesEditor extends Component {
     super(props);
   }
 
+  onChange(event) {
+    this.props.updateFileContent(event.target.value);
+  }
+
   render() {
     return (
       <div>
         <div>name: {this.props.file.name}</div>
-        <textarea value={this.props.file.content}></textarea>
+        <textarea value={this.props.file.content} onChange={this.onChange.bind(this)}></textarea>
       </div>
     );
   }

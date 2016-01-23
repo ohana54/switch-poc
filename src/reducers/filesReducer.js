@@ -13,6 +13,14 @@ export default function filesReducer(state = initialState, action) {
         ...state,
         file: action.file
       };
+    case 'UPDATE_FILE_CONTENT':
+      return {
+        ...state,
+        file: {
+          ...state.file,
+          content: action.content
+        }
+      };
     default:
     return state;
   }

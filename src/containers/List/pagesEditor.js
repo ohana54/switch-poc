@@ -31,6 +31,10 @@ export default class PagesEditor extends Component {
       {color: 'blue'} : {color: 'black'};
   }
 
+  onChange(event) {
+    this.props.updatePageContent(this.props.currentTab, event.target.value);
+  }
+
   render() {
     return (
       <div>
@@ -38,8 +42,8 @@ export default class PagesEditor extends Component {
           <button style={this.getStyle('page')} onClick={this.onPageTabClick.bind(this)}>{this.props.page.name}</button>
           <button style={this.getStyle('site')} onClick={this.onSiteTabClick.bind(this)}>site.js</button>
         </div>
-        {this.props.currentTab === 'site' ? <textarea value={this.props.site.content} readOnly></textarea>
-        : <textarea value={this.props.page.content} readOnly></textarea>}
+        {this.props.currentTab === 'site' ? <textarea value={this.props.site.content} onChange={this.onChange.bind(this)}></textarea>
+      : <textarea value={this.props.page.content} onChange={this.onChange.bind(this)}></textarea>}
       </div>
     );
   }

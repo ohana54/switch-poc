@@ -17,6 +17,14 @@ export default function pagesReducer(state = initialState, action) {
         [pageType]: action.page,
         currentTab: pageType
       };
+    case 'UPDATE_PAGE_CONTENT':
+      return {
+        ...state,
+        [action.tab]: {
+          ...state[action.tab],
+          content: action.content
+        }
+      };
     default:
     return state;
   }

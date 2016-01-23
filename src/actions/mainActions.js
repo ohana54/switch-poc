@@ -4,7 +4,7 @@ export function switchContext(newContext) {
   return (dispatch, getState) => {
     const state = getState();
     if (!state.inTransition) {
-      //saveCurrentContext(state.currentContext);
+      dispatch(saveCurrentContext(state.context));
       dispatch(beginTransition(newContext));
     } else {
       dispatch(updateTransition(newContext));
@@ -23,6 +23,21 @@ export function switchContext(newContext) {
         dispatch(endTransition(newContext));
     	}
     }
+  }
+}
+
+export function updatePageContent(tab, content) {
+  return {
+    type: 'UPDATE_PAGE_CONTENT',
+    tab,
+    content
+  }
+}
+
+export function updateFileContent(content) {
+  return {
+    type: 'UPDATE_FILE_CONTENT',
+    content
   }
 }
 
@@ -47,9 +62,48 @@ function endTransition(newContext) {
   };
 }
 
-function saveCurrentContext() {
+function saveCurrentContext(contextToSave) {
   return (dispatch, getState) => {
-    const currentContext = getState().context;
+    if (contextToSave === null) return;
+    dispatch(startSave(contextToSave));
+    if (contextToSave.type === 'page') {
+  		return dispatch(savePage(contextToSave)).then(dispatchEndSave);
+  	}
+  	if (contextToSave.type === 'file') {
+  		return dispatch(saveFile(contextToSave)).then(dispatchEndSave);
+  	}
+
+    function dispatchEndSave() {
+      dispatch(endSave());
+    }
+  }
+}
+
+function startSave(contextToSave) {
+  return {
+    type: 'START_SAVE',
+    context: contextToSave
+  }
+}
+
+function endSave() {
+  return {
+    type: 'END_SAVE'
+  }
+}
+
+function savePage(context) {
+  return (dispatch, getState) => {
+    const pages = getState().pages;
+    const itemToSave = context.name === 'site' ? pages.site : pages.page;
+    return server.savePage(itemToSave.name, itemToSave.content);
+  }
+}
+
+function saveFile(context) {
+  return (dispatch, getState) => {
+    const file = getState().files.file;
+    return server.saveFile(file.name, file.content);
   }
 }
 
