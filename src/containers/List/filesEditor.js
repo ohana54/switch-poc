@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import * as actionCreators from 'actions/mainActions';
 
 @connect(
-  state => state.files,
+  state => ({ files: state.files }),
   dispatch => bindActionCreators(actionCreators, dispatch)
 )
 export default class FilesEditor extends Component {
@@ -15,14 +15,15 @@ export default class FilesEditor extends Component {
   }
 
   onChange(event) {
-    this.props.updateFileContent(event.target.value);
+    this.props.updateFileContent(this.props.fileName, event.target.value);
   }
 
   render() {
+    const file = this.props.files[this.props.fileName];
     return (
       <div>
-        <div>name: {this.props.file.name}</div>
-        <textarea value={this.props.file.content} onChange={this.onChange.bind(this)}></textarea>
+        <div>name: {file.name}</div>
+        <textarea value={file.content} onChange={this.onChange.bind(this)}></textarea>
       </div>
     );
   }

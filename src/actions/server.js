@@ -29,6 +29,7 @@ const data = {
 function loadPage(pageName) {
   return new Promise((resolve) => {
     setTimeout(() => {
+      console.log('@@@ SERVER: loading ', pageName);
       resolve(data.pages[pageName]);
     }, 1500);
   });
@@ -37,23 +38,26 @@ function loadPage(pageName) {
 function loadFile(fileName) {
   return new Promise((resolve) => {
     setTimeout(() => {
+      console.log('@@@ SERVER: loading ', fileName);
       resolve(data.files[fileName]);
     }, 1500);
   });
 }
 
-function savePage(page, content) {
+function savePage(pageName, content) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      data.pages[page].content = content;
+      console.log('@@@ SERVER: saving ', pageName);
+      data.pages[pageName].content = content;
       resolve();
-    }, 500);
+    }, 2500);
   });
 }
 
 function saveFile(fileName, content) {
   return new Promise((resolve) => {
     setTimeout(() => {
+      console.log('@@@ SERVER: saving ', fileName);
       data.files[fileName].content = content;
       resolve();
     }, 500);

@@ -1,10 +1,10 @@
 const initialState = null;
 
-export default function saveReducer(state = initialState, action) {
+export default function contextToShowReducer(state = initialState, action) {
   switch (action.type) {
-    case 'START_SAVE':
+    case 'SET_IN_TRANSITION':
       return action.context;
-    case 'END_SAVE':
+    case 'END_TRANSITION':
       return null;
     default:
     return state;

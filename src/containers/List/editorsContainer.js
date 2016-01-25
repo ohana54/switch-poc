@@ -8,7 +8,7 @@ import FilesEditor from './filesEditor.js';
 import * as actionCreators from 'actions/mainActions';
 
 @connect(
-  state => ({ visibleEditor: state.visibleEditor }),
+  state => ({ visibleEditor: state.visibleEditor, context: state.context}),
   dispatch => bindActionCreators(actionCreators, dispatch)
 )
 export default class EditorsContainer extends Component {
@@ -20,8 +20,8 @@ export default class EditorsContainer extends Component {
     return (
       <div style={{marginTop: '10px'}}>
         current editor: {this.props.visibleEditor}
-        {this.props.visibleEditor === 'page' ? <PagesEditor></PagesEditor> : null}
-        {this.props.visibleEditor === 'file' ? <FilesEditor></FilesEditor> : null}
+        {this.props.visibleEditor === 'page' ? <PagesEditor fileName={this.props.context.name} currentPageId={this.props.currentPageId}></PagesEditor> : null}
+        {this.props.visibleEditor === 'file' ? <FilesEditor fileName={this.props.context.name}></FilesEditor> : null}
         {this.props.visibleEditor === 'db' ? <div>db editor</div> : null}
       </div>
     );

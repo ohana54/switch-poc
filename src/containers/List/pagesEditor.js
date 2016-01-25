@@ -6,11 +6,7 @@ import { connect } from 'react-redux';
 import * as actionCreators from 'actions/mainActions';
 
 @connect(
-  state => ({
-    page: state.pages.page,
-    site: state.pages.site,
-    currentTab: state.pages.currentTab
-  }),
+  state => state.pages,
   dispatch => bindActionCreators(actionCreators, dispatch)
 )
 export default class PagesEditor extends Component {
@@ -19,7 +15,7 @@ export default class PagesEditor extends Component {
   }
 
   onPageTabClick() {
-    this.props.switchContext({type: 'page', name: this.props.page.name});
+    this.props.switchContext({type: 'page', name: this.props.currentPageId});
   }
 
   onSiteTabClick() {
@@ -32,18 +28,27 @@ export default class PagesEditor extends Component {
   }
 
   onChange(event) {
-    this.props.updatePageContent(this.props.currentTab, event.target.value);
+    const pageName = this.props.pages[this.props.fileName];
+    this.props.updatePageContent(pageName, event.target.value);
+  }
+
+  getContent() {
+    if (this.props.currentTab === 'site') {
+      return this.props.pages['site'].content;
+    } else {
+      return this.props.pages[this.props.fileName].content;
+    }
   }
 
   render() {
+    const page = this.props.pages[this.props.fileName];
     return (
       <div>
         <div>
-          <button style={this.getStyle('page')} onClick={this.onPageTabClick.bind(this)}>{this.props.page.name}</button>
+          <button style={this.getStyle('page')} onClick={this.onPageTabClick.bind(this)}>JS</button>
           <button style={this.getStyle('site')} onClick={this.onSiteTabClick.bind(this)}>site.js</button>
         </div>
-        {this.props.currentTab === 'site' ? <textarea value={this.props.site.content} onChange={this.onChange.bind(this)}></textarea>
-      : <textarea value={this.props.page.content} onChange={this.onChange.bind(this)}></textarea>}
+        <textarea value={this.getContent()} onChange={this.onChange.bind(this)}></textarea>
       </div>
     );
   }

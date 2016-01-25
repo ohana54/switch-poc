@@ -34,7 +34,7 @@ export class IDE extends Component {
         <div>switch count: <span>{this.state.counter}</span></div>
         <div>page id: <span>{this.props.currentPageId}</span></div>
         <div>context: <span>{JSON.stringify(this.props.context)}</span></div>
-        <EditorsContainer/>
+        <EditorsContainer currentPageId={this.props.currentPageId} />
       </div>
     );
   }

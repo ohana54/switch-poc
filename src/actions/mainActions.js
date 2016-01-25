@@ -3,12 +3,9 @@ import server from './server';
 export function switchContext(newContext) {
   return (dispatch, getState) => {
     const state = getState();
-    if (!state.inTransition) {
-      dispatch(saveCurrentContext(state.context));
-      dispatch(beginTransition(newContext));
-    } else {
-      dispatch(updateTransition(newContext));
-    }
+    dispatch(setInTransition(newContext));
+
+    dispatch(save(state.context));
 
     if (newContext.type === 'page') {
       dispatch(loadPage(newContext)).then(dispatchEndTransition);
@@ -18,39 +15,33 @@ export function switchContext(newContext) {
     }
 
     function dispatchEndTransition() {
-      const currentContext = getState().context;
-    	if (currentContext === newContext) {
+      const contextToShow = getState().contextToShow;
+    	if (contextToShow === newContext) {
         dispatch(endTransition(newContext));
     	}
     }
   }
 }
 
-export function updatePageContent(tab, content) {
+export function updatePageContent(pageName, content) {
   return {
     type: 'UPDATE_PAGE_CONTENT',
-    tab,
+    pageName,
     content
   }
 }
 
-export function updateFileContent(content) {
+export function updateFileContent(fileName, content) {
   return {
     type: 'UPDATE_FILE_CONTENT',
-    content
+    content,
+    fileName
   }
 }
 
-function beginTransition(context) {
+function setInTransition(context) {
   return {
-    type: 'BEGIN_TRANSITION',
-    context
-  };
-}
-
-function updateTransition(context) {
-  return {
-    type: 'UPDATE_TRANSITION',
+    type: 'SET_IN_TRANSITION',
     context
   };
 }
@@ -58,23 +49,34 @@ function updateTransition(context) {
 function endTransition(newContext) {
   return {
     type: 'END_TRANSITION',
-    visibleEditor: newContext.type
+    context: newContext
   };
 }
 
-function saveCurrentContext(contextToSave) {
+function save(contextToSave) {
   return (dispatch, getState) => {
     if (contextToSave === null) return;
-    dispatch(startSave(contextToSave));
+
     if (contextToSave.type === 'page') {
-  		return dispatch(savePage(contextToSave)).then(dispatchEndSave);
+      const page = getState().pages.pages[contextToSave.name];
+      if (page.state === 'saving') return;
+
+      dispatch(startSave(contextToSave));
+
+      return server.savePage(page.name, page.content).then(dispatchEndSave);
   	}
+
   	if (contextToSave.type === 'file') {
-  		return dispatch(saveFile(contextToSave)).then(dispatchEndSave);
+      const file = getState().files[contextToSave.name];
+      if (file.state === 'saving') return;
+
+      dispatch(startSave(contextToSave));
+
+  		return server.saveFile(file.name, file.content).then(dispatchEndSave);
   	}
 
     function dispatchEndSave() {
-      dispatch(endSave());
+      dispatch(endSave(contextToSave));
     }
   }
 }
@@ -86,36 +88,18 @@ function startSave(contextToSave) {
   }
 }
 
-function endSave() {
+function endSave(context) {
   return {
-    type: 'END_SAVE'
-  }
-}
-
-function savePage(context) {
-  return (dispatch, getState) => {
-    const pages = getState().pages;
-    const itemToSave = context.name === 'site' ? pages.site : pages.page;
-    return server.savePage(itemToSave.name, itemToSave.content);
-  }
-}
-
-function saveFile(context) {
-  return (dispatch, getState) => {
-    const file = getState().files.file;
-    return server.saveFile(file.name, file.content);
+    type: 'END_SAVE',
+    context
   }
 }
 
 function loadPage(newContext) {
   return (dispatch, getState) => {
     const pageToLoad = newContext.name;
-    //dispatch(beginLoadPage(pageToLoad));
     return server.loadPage(pageToLoad).then(function(page) {
-      const currentContext = getState().context;
-    	if (currentContext.name === pageToLoad) {
-    		dispatch(endLoadPage(page));
-    	}
+      dispatch(endLoadPage(page));
     });
   };
 }
@@ -123,12 +107,8 @@ function loadPage(newContext) {
 function loadFile(newContext) {
   return (dispatch, getState) => {
     const fileToLoad = newContext.name;
-    //dispatch(beginLoadFile(fileToLoad));
     return server.loadFile(fileToLoad).then(function(file) {
-      const currentContext = getState().context;
-      if (currentContext.name === fileToLoad) {
-        dispatch(endLoadFile(file));
-      }
+      dispatch(endLoadFile(file));
     });
   };
 }
