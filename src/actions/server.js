@@ -27,19 +27,30 @@ const data = {
 }
 
 function loadPage(pageName) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      console.log('@@@ SERVER: loading ', pageName);
-      resolve(data.pages[pageName]);
+      if (pageName === 'page1') {
+        console.log('@@@ SERVER: failing to load ', pageName);
+        reject();
+      } else {
+        console.log('@@@ SERVER: loading ', pageName);
+        resolve(data.pages[pageName]);
+      }
     }, 1500);
   });
 }
 
 function loadFile(fileName) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      console.log('@@@ SERVER: loading ', fileName);
-      resolve(data.files[fileName]);
+      if (fileName === 'file1.js') {
+        console.log('@@@ SERVER: failing to load ', fileName);
+        reject();
+      } else {
+        console.log('@@@ SERVER: loading ', fileName);
+        resolve(data.files[fileName]);
+      }
+
     }, 1500);
   });
 }

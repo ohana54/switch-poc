@@ -6,16 +6,35 @@ const initialState = {
 export default function pagesReducer(state = initialState, action) {
   switch (action.type) {
     case 'BEGIN_LOAD_PAGE':
+      let page = state.pages[action.page.name];
+      if (!page) {
+        page = {
+          name: action.page.name,
+          content: ''
+        };
+      }
+
       return {
+        ...state,
         pages: {
-          [action.pageToLoad]: {
-            name: action.pageToLoad,
-            content: null,
+          ...state.pages,
+          [page.name]: {
+            ...page,
             state: 'loading'
-          },
-          ...state.pages
-        },
-        ...state
+          }
+        }
+      };
+    case 'FAIL_LOAD_PAGE':
+      const page2 = state.pages[action.pageToLoad];
+      return {
+        ...state,
+        pages: {
+          ...state.pages,
+          [page2.name]: {
+            ...page2,
+            state: 'virtual'
+          }
+        }
       };
     case 'END_LOAD_PAGE':
       return {

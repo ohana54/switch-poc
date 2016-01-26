@@ -17,7 +17,7 @@ export function switchContext(newContext) {
 }
 
 function shouldSave(item) {
-  return item && item.isDirty && item.state !== 'saving';
+  return item.isDirty && item.state !== 'saving';
 }
 
 function save(contextToSave) {
@@ -52,6 +52,10 @@ function save(contextToSave) {
   }
 }
 
+function shouldLoad(item) {
+  return !item || item.state === 'virtual';
+}
+
 function loadPage(newContext) {
   return (dispatch, getState) => {
     const pageToLoad = newContext.name;
@@ -61,10 +65,14 @@ function loadPage(newContext) {
     // so we use the cached version of the code instead of reloading it
     // if we do decide to reload, we need to consider that the current
     // [potentially unsaved] content will be overridden
-    if (page) return;
+    if (!shouldLoad(page)) return;
+
+    dispatch(beginLoadPage(newContext));
 
     server.loadPage(pageToLoad).then(function(page) {
       dispatch(endLoadPage(page));
+    }).catch(function() {
+      dispatch(failLoadPage(pageToLoad));
     });
   };
 }
@@ -74,10 +82,14 @@ function loadFile(newContext) {
     const fileToLoad = newContext.name;
 
     const file = getState().files[fileToLoad];
-    if (file) return;
+    if (!shouldLoad(file)) return;
+
+    dispatch(beginLoadFile(newContext));
 
     server.loadFile(fileToLoad).then(function(file) {
       dispatch(endLoadFile(file));
+    }).catch(function() {
+      dispatch(failLoadFile(fileToLoad));
     });
   };
 }
@@ -126,17 +138,17 @@ function failSave(context) {
   }
 }
 
-function beginLoadFile(fileToLoad) {
+function beginLoadFile(file) {
   return {
     type: 'BEGIN_LOAD_FILE',
-    fileToLoad
+    file
   }
 }
 
-function beginLoadPage(pageToLoad) {
+function beginLoadPage(page) {
   return {
     type: 'BEGIN_LOAD_PAGE',
-    pageToLoad
+    page
   }
 }
 
@@ -144,6 +156,20 @@ function endLoadPage(page) {
   return {
     type: 'END_LOAD_PAGE',
     page
+  }
+}
+
+function failLoadPage(pageToLoad) {
+  return {
+    type: 'FAIL_LOAD_PAGE',
+    pageToLoad
+  }
+}
+
+function failLoadFile(fileToLoad) {
+  return {
+    type: 'FAIL_LOAD_FILE',
+    fileToLoad
   }
 }
 
