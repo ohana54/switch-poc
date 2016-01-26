@@ -3,22 +3,15 @@ import server from './server';
 export function switchContext(newContext) {
   return (dispatch, getState) => {
     const state = getState();
-    dispatch(setInTransition(newContext));
+    dispatch(setContext(newContext));
 
     dispatch(save(state.context));
 
     if (newContext.type === 'page') {
-      dispatch(loadPage(newContext)).then(dispatchEndTransition);
+      dispatch(loadPage(newContext));
     }
     if (newContext.type === 'file') {
-      dispatch(loadFile(newContext)).then(dispatchEndTransition);
-    }
-
-    function dispatchEndTransition() {
-      const contextToShow = getState().contextToShow;
-    	if (contextToShow === newContext) {
-        dispatch(endTransition(newContext));
-    	}
+      dispatch(loadFile(newContext));
     }
   }
 }
@@ -80,22 +73,15 @@ export function updatePageContent(pageName, content) {
 export function updateFileContent(fileName, content) {
   return {
     type: 'UPDATE_FILE_CONTENT',
-    content,
-    fileName
+    fileName,
+    content
   }
 }
 
-function setInTransition(context) {
+function setContext(context) {
   return {
-    type: 'SET_IN_TRANSITION',
+    type: 'SET_CONTEXT',
     context
-  };
-}
-
-function endTransition(newContext) {
-  return {
-    type: 'END_TRANSITION',
-    context: newContext
   };
 }
 

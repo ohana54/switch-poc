@@ -28,20 +28,28 @@ export default class PagesEditor extends Component {
   }
 
   onChange(event) {
-    const page = this.props.pages[this.props.fileName];
-    this.props.updatePageContent(page, event.target.value);
+    this.props.updatePageContent(this.props.fileName, event.target.value);
   }
 
-  getContent() {
+  getActiveFile() {
     if (this.props.currentTab === 'site') {
-      return this.props.pages['site'].content;
+      return this.props.pages['site'];
     } else {
-      return this.props.pages[this.props.fileName].content;
+      return this.props.pages[this.props.fileName];
     }
   }
 
+  getContent() {
+    const file = this.getActiveFile();
+
+    if (!file) {
+      return null;
+    }
+
+    return file.content;
+  }
+
   render() {
-    const page = this.props.pages[this.props.fileName];
     return (
       <div>
         <div>

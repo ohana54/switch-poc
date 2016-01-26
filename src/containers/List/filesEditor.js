@@ -20,6 +20,11 @@ export default class FilesEditor extends Component {
 
   render() {
     const file = this.props.files[this.props.fileName];
+    
+    if (!file) {
+      return null;
+    }
+
     return (
       <div>
         <div>name: {file.name}</div>

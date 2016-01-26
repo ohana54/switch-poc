@@ -2,7 +2,7 @@ const initialState = null;
 
 export default function contextReducer(state = initialState, action) {
   switch (action.type) {
-    case 'END_TRANSITION':
+    case 'SET_CONTEXT':
       return action.context;
     default:
     return state;
