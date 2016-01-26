@@ -53,7 +53,11 @@ function loadPage(newContext) {
     const pageToLoad = newContext.name;
 
     const page = getState().pages.pages[pageToLoad];
-    if (page && page.state === 'saving') return;
+    // we assume that we don't have concurrent sessions
+    // so we use the cached version of the code instead of reloading it
+    // if we do decide to reload, we need to consider that the current
+    // [potentially unsaved] content will be overridden
+    if (page) return;
 
     server.loadPage(pageToLoad).then(function(page) {
       dispatch(endLoadPage(page));
@@ -66,7 +70,7 @@ function loadFile(newContext) {
     const fileToLoad = newContext.name;
 
     const file = getState().files[fileToLoad];
-    if (file && file.state === 'saving') return;
+    if (file) return;
 
     server.loadFile(fileToLoad).then(function(file) {
       dispatch(endLoadFile(file));
