@@ -14,6 +14,16 @@ export default class PagesEditor extends Component {
     super(props);
   }
 
+  componentDidMount() {
+    this.intervalToken = setInterval(() => {
+      this.props.save({type: 'page', name: this.props.fileName});
+    }, 3000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalToken);
+  }
+
   onPageTabClick() {
     this.props.switchContext({type: 'page', name: this.props.currentPageId});
   }

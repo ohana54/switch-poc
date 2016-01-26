@@ -20,7 +20,7 @@ function shouldSave(item) {
   return item.isDirty && item.state !== 'saving';
 }
 
-function save(contextToSave) {
+export function save(contextToSave) {
   return (dispatch, getState) => {
     if (contextToSave === null) return;
 
@@ -177,5 +177,13 @@ function endLoadFile(file) {
   return {
     type: 'END_LOAD_FILE',
     file
+  }
+}
+
+
+export function autoSave(context) {
+  return (dispatch, getState) => {
+    const state = getState();
+    dispatch(save(context));
   }
 }
