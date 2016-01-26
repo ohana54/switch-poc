@@ -47,7 +47,11 @@ function save(contextToSave) {
 function loadPage(newContext) {
   return (dispatch, getState) => {
     const pageToLoad = newContext.name;
-    return server.loadPage(pageToLoad).then(function(page) {
+
+    const page = getState().pages.pages[pageToLoad];
+    if (page && page.state === 'saving') return;
+
+    server.loadPage(pageToLoad).then(function(page) {
       dispatch(endLoadPage(page));
     });
   };
@@ -56,7 +60,11 @@ function loadPage(newContext) {
 function loadFile(newContext) {
   return (dispatch, getState) => {
     const fileToLoad = newContext.name;
-    return server.loadFile(fileToLoad).then(function(file) {
+
+    const file = getState().files[fileToLoad];
+    if (file && file.state === 'saving') return;
+
+    server.loadFile(fileToLoad).then(function(file) {
       dispatch(endLoadFile(file));
     });
   };
