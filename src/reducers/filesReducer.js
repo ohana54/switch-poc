@@ -24,7 +24,7 @@ export default function filesReducer(state = initialState, action) {
           content: action.content
         }
       };
-    case 'START_SAVE':
+    case 'BEGIN_SAVE':
       if (action.context.type !== 'file') return state;
       return {
         ...state,

@@ -95,7 +95,7 @@ function setContext(context) {
 
 function startSave(contextToSave) {
   return {
-    type: 'START_SAVE',
+    type: 'BEGIN_SAVE',
     context: contextToSave
   }
 }

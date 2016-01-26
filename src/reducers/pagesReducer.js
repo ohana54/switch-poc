@@ -36,7 +36,7 @@ export default function pagesReducer(state = initialState, action) {
           }
         }
       };
-    case 'START_SAVE':
+    case 'BEGIN_SAVE':
       if (action.context.type !== 'page') return state;
       return {
         ...state,
