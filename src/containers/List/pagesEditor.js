@@ -28,8 +28,8 @@ export default class PagesEditor extends Component {
   }
 
   onChange(event) {
-    const pageName = this.props.pages[this.props.fileName];
-    this.props.updatePageContent(pageName, event.target.value);
+    const page = this.props.pages[this.props.fileName];
+    this.props.updatePageContent(page, event.target.value);
   }
 
   getContent() {
