@@ -35,7 +35,7 @@ export default class PagesEditor extends Component {
     const file = this.props.pages[this.props.fileName];
 
     if (!file) {
-      return null;
+      return '';
     }
 
     return file.content;

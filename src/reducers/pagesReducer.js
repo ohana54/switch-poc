@@ -60,7 +60,7 @@ export default function pagesReducer(state = initialState, action) {
           }
         }
       };
-    case 'END_TRANSITION':
+    case 'SET_CONTEXT':
       if (action.context.type !== 'page') return state;
       const pageType = action.context.name === 'site' ? 'site' : 'page';
       return {
