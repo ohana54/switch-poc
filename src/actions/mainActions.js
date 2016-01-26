@@ -23,6 +23,52 @@ export function switchContext(newContext) {
   }
 }
 
+function save(contextToSave) {
+  return (dispatch, getState) => {
+    if (contextToSave === null) return;
+
+    if (contextToSave.type === 'page') {
+      const page = getState().pages.pages[contextToSave.name];
+      if (page.state === 'saving') return;
+
+      dispatch(startSave(contextToSave));
+
+      return server.savePage(page.name, page.content).then(dispatchEndSave);
+  	}
+
+  	if (contextToSave.type === 'file') {
+      const file = getState().files[contextToSave.name];
+      if (file.state === 'saving') return;
+
+      dispatch(startSave(contextToSave));
+
+  		return server.saveFile(file.name, file.content).then(dispatchEndSave);
+  	}
+
+    function dispatchEndSave() {
+      dispatch(endSave(contextToSave));
+    }
+  }
+}
+
+function loadPage(newContext) {
+  return (dispatch, getState) => {
+    const pageToLoad = newContext.name;
+    return server.loadPage(pageToLoad).then(function(page) {
+      dispatch(endLoadPage(page));
+    });
+  };
+}
+
+function loadFile(newContext) {
+  return (dispatch, getState) => {
+    const fileToLoad = newContext.name;
+    return server.loadFile(fileToLoad).then(function(file) {
+      dispatch(endLoadFile(file));
+    });
+  };
+}
+
 export function updatePageContent(pageName, content) {
   return {
     type: 'UPDATE_PAGE_CONTENT',
@@ -53,34 +99,6 @@ function endTransition(newContext) {
   };
 }
 
-function save(contextToSave) {
-  return (dispatch, getState) => {
-    if (contextToSave === null) return;
-
-    if (contextToSave.type === 'page') {
-      const page = getState().pages.pages[contextToSave.name];
-      if (page.state === 'saving') return;
-
-      dispatch(startSave(contextToSave));
-
-      return server.savePage(page.name, page.content).then(dispatchEndSave);
-  	}
-
-  	if (contextToSave.type === 'file') {
-      const file = getState().files[contextToSave.name];
-      if (file.state === 'saving') return;
-
-      dispatch(startSave(contextToSave));
-
-  		return server.saveFile(file.name, file.content).then(dispatchEndSave);
-  	}
-
-    function dispatchEndSave() {
-      dispatch(endSave(contextToSave));
-    }
-  }
-}
-
 function startSave(contextToSave) {
   return {
     type: 'START_SAVE',
@@ -93,24 +111,6 @@ function endSave(context) {
     type: 'END_SAVE',
     context
   }
-}
-
-function loadPage(newContext) {
-  return (dispatch, getState) => {
-    const pageToLoad = newContext.name;
-    return server.loadPage(pageToLoad).then(function(page) {
-      dispatch(endLoadPage(page));
-    });
-  };
-}
-
-function loadFile(newContext) {
-  return (dispatch, getState) => {
-    const fileToLoad = newContext.name;
-    return server.loadFile(fileToLoad).then(function(file) {
-      dispatch(endLoadFile(file));
-    });
-  };
 }
 
 function beginLoadFile(fileToLoad) {
