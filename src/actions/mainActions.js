@@ -16,13 +16,17 @@ export function switchContext(newContext) {
   }
 }
 
+function shouldSave(item) {
+  return item && item.isDirty && item.state !== 'saving';
+}
+
 function save(contextToSave) {
   return (dispatch, getState) => {
     if (contextToSave === null) return;
 
     if (contextToSave.type === 'page') {
       const page = getState().pages.pages[contextToSave.name];
-      if (!page || page.state === 'saving') return;
+      if (!shouldSave(page)) return;
 
       dispatch(startSave(contextToSave));
 
@@ -31,7 +35,7 @@ function save(contextToSave) {
 
   	if (contextToSave.type === 'file') {
       const file = getState().files[contextToSave.name];
-      if (!file || file.state === 'saving') return;
+      if (!shouldSave(file)) return;
 
       dispatch(startSave(contextToSave));
 
