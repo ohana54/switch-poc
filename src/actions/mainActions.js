@@ -22,24 +22,28 @@ function save(contextToSave) {
 
     if (contextToSave.type === 'page') {
       const page = getState().pages.pages[contextToSave.name];
-      if (page.state === 'saving') return;
+      if (!page || page.state === 'saving') return;
 
       dispatch(startSave(contextToSave));
 
-      return server.savePage(page.name, page.content).then(dispatchEndSave);
+      return server.savePage(page.name, page.content).then(dispatchEndSave).catch(dispatchFailSave);
   	}
 
   	if (contextToSave.type === 'file') {
       const file = getState().files[contextToSave.name];
-      if (file.state === 'saving') return;
+      if (!file || file.state === 'saving') return;
 
       dispatch(startSave(contextToSave));
 
-  		return server.saveFile(file.name, file.content).then(dispatchEndSave);
+  		return server.saveFile(file.name, file.content).then(dispatchEndSave).catch(dispatchFailSave);
   	}
 
     function dispatchEndSave() {
       dispatch(endSave(contextToSave));
+    }
+
+    function dispatchFailSave() {
+      dispatch(failSave(contextToSave));
     }
   }
 }
@@ -103,6 +107,13 @@ function startSave(contextToSave) {
 function endSave(context) {
   return {
     type: 'END_SAVE',
+    context
+  }
+}
+
+function failSave(context) {
+  return {
+    type: 'FAIL_SAVE',
     context
   }
 }

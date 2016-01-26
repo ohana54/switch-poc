@@ -32,7 +32,8 @@ export default function pagesReducer(state = initialState, action) {
           ...state.pages,
           [action.pageName]: {
             ...state.pages[action.pageName],
-            content: action.content
+            content: action.content,
+            isDirty: true
           }
         }
       };
@@ -44,7 +45,8 @@ export default function pagesReducer(state = initialState, action) {
           ...state.pages,
           [action.context.name]: {
             ...state.pages[action.context.name],
-            state: 'saving'
+            state: 'saving',
+            isDirty: false
           }
         }
       };
@@ -56,7 +58,20 @@ export default function pagesReducer(state = initialState, action) {
           ...state.pages,
           [action.context.name]: {
             ...state.pages[action.context.name],
-            state: null
+            state: undefined
+          }
+        }
+      };
+    case 'FAIL_SAVE':
+      if (action.context.type !== 'page') return state;
+      return {
+        ...state,
+        pages: {
+          ...state.pages,
+          [action.context.name]: {
+            ...state.pages[action.context.name],
+            state: undefined,
+            isDirty: true
           }
         }
       };

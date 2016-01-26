@@ -21,7 +21,8 @@ export default function filesReducer(state = initialState, action) {
         ...state,
         [action.fileName]: {
           ...state[action.fileName],
-          content: action.content
+          content: action.content,
+          isDirty: true
         }
       };
     case 'BEGIN_SAVE':
@@ -30,7 +31,8 @@ export default function filesReducer(state = initialState, action) {
         ...state,
         [action.context.name]: {
           ...state[action.context.name],
-          state: 'saving'
+          state: 'saving',
+          isDirty: false
         }
       };
     case 'END_SAVE':
@@ -40,6 +42,16 @@ export default function filesReducer(state = initialState, action) {
         [action.context.name]: {
           ...state[action.context.name],
           state: undefined
+        }
+      };
+    case 'FAIL_SAVE':
+      if (action.context.type !== 'file') return state;
+      return {
+        ...state,
+        [action.context.name]: {
+          ...state[action.context.name],
+          state: undefined,
+          isDirty: true
         }
       };
     default:

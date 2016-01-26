@@ -45,11 +45,16 @@ function loadFile(fileName) {
 }
 
 function savePage(pageName, content) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      console.log('@@@ SERVER: saving ', pageName);
-      data.pages[pageName].content = content;
-      resolve();
+      if (content !== 'fail') {
+        console.log('@@@ SERVER: saving ', pageName);
+        data.pages[pageName].content = content;
+        resolve();
+      } else {
+        console.log('@@@ SERVER: failing to save ', pageName);
+        reject();
+      }
     }, 2500);
   });
 }
@@ -60,7 +65,7 @@ function saveFile(fileName, content) {
       console.log('@@@ SERVER: saving ', fileName);
       data.files[fileName].content = content;
       resolve();
-    }, 500);
+    }, 2500);
   });
 }
 
